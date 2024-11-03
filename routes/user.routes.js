@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 
 const userModel = require('../models/user');
@@ -74,12 +74,12 @@ router.post('/login',
             }
 
 
-            const isMatch = await bcrypt.compare(password, user.password);
-            console.log("Password  result:", isMatch); 
+            const isMatch = await bcrypt.compare(req.body.password, user.password);
+            // console.log("Password  result:", isMatch); 
 
             if (!isMatch) {
                 return res.status(400).json({ message: "Username or password is incorrect" });
-            }
+            } 
 
             // console.log("JWT Secret:", process.env.JWT_SECRET); 
             const token = jwt.sign(
@@ -87,7 +87,8 @@ router.post('/login',
                 process.env.JWT_SECRET
             );
 
-            res.json({ token });
+            res.cookie('token',token)
+            res.send("Logged In Successfully !")
         } catch (err) {
             console.error("Error during login:", err);
             res.status(500).json({ message: 'Server error' });
